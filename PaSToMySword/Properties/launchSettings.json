@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PaSToMySword": {
+      "commandName": "Project",
+      "commandLineArgs": "-p recueil.json -o pas.cmt.mybible"
+    }
+  }
+}

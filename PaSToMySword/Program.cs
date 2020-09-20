@@ -1,12 +1,15 @@
 ﻿using CommandLine;
+using Common.Commentaries.Model;
+using CommonTools.Commentaries.Tools;
 using Figgle;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MyBibleTools.Commentaries;
+using MyBibleTools.Commentaries.Tools;
 using MySwordTools.Commentaries;
 using MySwordTools.Commentaries.Model;
+using MySwordTools.Commentaries.Tools;
 using NLog.Extensions.Logging;
-using PaSToMySword.Model.ExchangeFormat;
 using PaSToMySword.Tools;
 using System;
 using System.Collections.Generic;
@@ -21,25 +24,35 @@ namespace PaSToMySword
 {
     internal class CommandLineOptions
     {
-        [Option('p', "path", Required = true, HelpText = "Input file to be processed.")]
-        public string Path { get; set; }
+        [Option('i', "input", Required = true, HelpText = "Input file raw text to be processed.")]
+        public string InputFile { get; set; }
 
-        [Option('o', "output", Required = true, HelpText = "Output file to be generated.")]
+        [Option('o', "output", Required = true, HelpText = "Output file name to be generated.")]
         public string Output { get; set; }
     }
 
     internal class Program
     {
-        static private ILogger<Program> _logger { get; set; }
-
-        private static MySwordCommentariesExport _commentariesExport;
+        private static MySwordCommentariesSaver _mySwordCommentariesExport;
+        private static MyBibleCommentariesSaver _myBibleCommentariesExport;
+        private static ICommentaryFormater _commentaireHtmlFormater;
+        private static BibleOnlineImporter _bibleOnlineImporter;
 
         private static void Main(string[] args)
         {
-            Console.WriteLine(FiggleFonts.Standard.Render("PaS to MySword"), Color.Red);
+            Console.WriteLine(FiggleFonts.Standard.Render("PaS to MySword & MyBible"), Color.Red);
 
             using var serviceProvider = new ServiceCollection()
-                .AddSingleton<MySwordCommentariesExport>()
+                .AddSingleton<MySwordCommentariesSaver>()
+                .AddSingleton<MyBibleCommentariesSaver>()
+                .AddSingleton<BibleOnlineImporter>()
+
+                .AddSingleton<MyBibleReferenceConverter>()
+                .AddSingleton<MySwordReferenceConverter>()
+
+                .AddSingleton<ICommentaryFormater<MyBibleReferenceConverter>, CommentaireHtmlFormater<MyBibleReferenceConverter>>()
+                .AddSingleton<ICommentaryFormater<MySwordReferenceConverter>, CommentaireHtmlFormater<MySwordReferenceConverter>>()
+
                 .AddLogging(config =>
                 {
                     config.ClearProviders().SetMinimumLevel(LogLevel.Trace);
@@ -48,8 +61,11 @@ namespace PaSToMySword
                 )
                 .BuildServiceProvider();
 
-            _logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<Program>();
-            _commentariesExport = serviceProvider.GetService<MySwordCommentariesExport>();
+            _mySwordCommentariesExport = serviceProvider.GetService<MySwordCommentariesSaver>();
+            _myBibleCommentariesExport = serviceProvider.GetService<MyBibleCommentariesSaver>();
+            _commentaireHtmlFormater = serviceProvider.GetService<ICommentaryFormater<MySwordReferenceConverter>>();
+
+            _bibleOnlineImporter = serviceProvider.GetService<BibleOnlineImporter>();
 
             Parser.Default.ParseArguments<CommandLineOptions>(args)
                 .WithParsed(RunOptions);
@@ -57,77 +73,18 @@ namespace PaSToMySword
 
         private static void RunOptions(CommandLineOptions opts)
         {
-            PasCommentaireToMySword(opts.Path, opts.Output);
-        }
+            RecueilExchange recueils = _bibleOnlineImporter.ReadFile(opts.InputFile);
 
-        private static RecueilExchange ReadJsonFile(string path)
-        {
-            _logger.LogDebug($"Read Json file {path}");
+            _mySwordCommentariesExport.Save(recueils.Commentaires, opts.Output);
 
-            using StreamReader streamReader = new StreamReader(path);
-            string jsonContent = streamReader.ReadToEnd();
-            RecueilExchange recueilExchange = JsonSerializer.Deserialize<RecueilExchange>(jsonContent, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true, Converters = { new JsonStringEnumConverter() } });
+            _myBibleCommentariesExport.Save(recueils.Commentaires, opts.Output);
 
-            _logger.LogInformation($"Found {recueilExchange.Recueils.Count()} Recueils.");
-            _logger.LogInformation($"Found {recueilExchange.Commentaires.Count()} Commentaires.");
+            using StreamWriter file = new StreamWriter(@"output.html");
 
-            return recueilExchange;
-        }
-
-        private static void PasCommentaireToMySword(string inputJsonFile, string outputDbName)
-        {
-            RecueilExchange recueils = ReadJsonFile(inputJsonFile);
-
-            _commentariesExport.SaveToDb(CommentairesToMySwordCommentaries(
-                recueils.Commentaires), 
-                new Details
-                {
-                    Abbreviation = "PaS",
-                    Autor = "Plaire au Seigneur",
-                    Comments = "Commentaire",
-                    Description = "Recueil de commentaire biblique",
-                    PublishDate = "2020",
-                    Title = "Plaire au Seigneur",
-                    Version = "0.1.0",
-                    VersionDate = DateTime.UtcNow
-                }, 
-                outputDbName);
-        }
-
-        private static IEnumerable<Commentary> CommentairesToMySwordCommentaries(IEnumerable<Commentaire> commentaires)
-        {
-            List<Commentary> commentaries = new List<Commentary>();
-            foreach (Commentaire commentaire in commentaires)
+            foreach (var commentaire in recueils.Commentaires)
             {
-                Commentary commentary = CommentaireToMySwordCommentary(commentaire);
-                if (commentary is object)
-                    commentaries.Add(commentary);
+                file.WriteLine(_commentaireHtmlFormater.ToString(commentaire));
             }
-
-            return commentaries;
-        }
-
-        private static Commentary CommentaireToMySwordCommentary(Commentaire commentaire)
-        {
-            Reference reference = ReferenceConverter.ConvertReference(commentaire.Reference);
-            int bookIndex = ReferenceConverter.BookNumberFromAbbreviation(reference.Book);
-
-            if (bookIndex >= 0)
-            {
-                return new Commentary
-                {
-                    Book = bookIndex,
-                    Chapter = reference.Chapter,
-                    FromVerse = reference.FromVerse,
-                    ToVerse = reference.ToVerse,
-                    Content = CommentaireFormatter.ToHtml(commentaire)
-                };
-            }
-            else
-            {
-                _logger.LogError($"book {reference.Book} not found in BookList");
-            }
-            return null;
         }
     }
 }

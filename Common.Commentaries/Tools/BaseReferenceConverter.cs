@@ -1,32 +1,18 @@
-﻿using System;
+﻿using Common.Commentaries.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PaSToMySword.Tools
+namespace Common.Commentaries.Tools
 {
-    public class Reference
-    {
-        #region Properties
-
-        public string Book { get; set; }
-
-        public int Chapter { get; set; }
-
-        public int FromVerse { get; set; }
-
-        public int? ToVerse { get; set; }
-
-        #endregion Properties
-    }
-
-    public class ReferenceConverter
+    public abstract class BaseReferenceConverter : IReferenceConverter
     {
         #region Fields
 
         static protected Dictionary<string, IEnumerable<string>> BookList = new Dictionary<string, IEnumerable<string>>
         {
-            {"Invalid", new string []{ } },
+            {"###", new string []{ } },
             {"Genèse", new string [] {"Ge", "Gen", "Genese" } },
             {"Exode", new string [] { "Ex", "Exo"} },
             {"Lévitique", new string [] { "Levitique", "Le", "Lé", "Lv", "Lev", "Lév" } },
@@ -35,12 +21,12 @@ namespace PaSToMySword.Tools
             {"Josué", new string [] { "Josue", "Jos", "Js" } },
             {"Juges", new string [] { "Juge", "Jug", "Jg" } },
             {"Ruth", new string [] { "Ru", "Rt" } },
-            {"1Samuel", new string [] { "1Sa","1S" } },
-            {"2Samuel", new string [] { "2Sa","2S"} },
-            {"1Roi", new string [] { "1R", "1Ro" } },
-            {"2Roi", new string [] {"2R", "2Ro" } },
-            {"1Chroniques", new string [] { "1Ch" } },
-            {"2Chroniques", new string [] { "2Ch" } },
+            {"1 Samuel", new string [] { "1Samuel", "1Sa","1S" } },
+            {"2 Samuel", new string [] { "2Samuel", "2Sa","2S"} },
+            {"1 Rois", new string [] { "1Rois", "1R", "1Ro" } },
+            {"2 Rois", new string [] { "2Rois", "2R", "2Ro" } },
+            {"1 Chroniques", new string [] { "1 Chroniques", "1Ch" } },
+            {"2 Chroniques", new string [] { "2 Chroniques", "2Ch" } },
             {"Esdras", new string [] { "Esd" } },
             {"Néhémie", new string [] { "Nehemie", "Ne", "Né", "Néh", "Neh"} },
             {"Esther", new string [] { "Est"} },
@@ -72,25 +58,25 @@ namespace PaSToMySword.Tools
             {"Jean", new string [] { "Jn" } },
             {"Actes", new string [] { "Ac", "Act" } },
             {"Romains", new string [] {"Romain", "Ro", "Rom" } },
-            {"1Corinthiens", new string [] { "1Co" } },
-            {"2Corinthiens", new string [] { "2Co" } },
+            {"1 Corinthiens", new string [] { "1Corinthiens", "1Co" } },
+            {"2 Corinthiens", new string [] { "2Corinthiens", "2Co" } },
             {"Galates", new string [] { "Gal", "Ga" } },
             {"Éphésiens", new string [] { "Ephesiens", "Ep", "Eph" } },
             {"Philippiens", new string [] { "Phi", "Ph", "Php" } },
-            {"Colossiens", new string [] { "Col" } },
-            {"1Thessaloniciens", new string [] { "1Th","1Thess" } },
-            {"2Thessaloniciens", new string [] { "2Th","2Thess" } },
-            {"1Timothée", new string [] { "1Timothee", "1Tim", "1Ti" } },
-            {"2Timothée", new string [] { "2Timothee", "2Tim", "2Ti" } },
+            {"Colossiens", new string [] { "Col", "Co" } },
+            {"1 Thessaloniciens", new string [] {"1Thessaloniciens", "1Th","1Thess" } },
+            {"2 Thessaloniciens", new string [] { "2Thessaloniciens", "2Th","2Thess" } },
+            {"1 Timothée", new string [] { "1Timothée", "1Timothee", "1Tim", "1Ti" } },
+            {"2 Timothée", new string [] { "2Timothée", "2Timothee", "2Tim", "2Ti" } },
             {"Tite", new string [] { "Ti", "Tt", "Tit" } },
             {"Philémon", new string [] { "Phm", "Philemon" } },
             {"Hébreux", new string [] { "Hé", "Hebreux", "He", "Heb", "Héb" } },
             {"Jacques", new string [] { "Jc", "Jaccque", "Ja", "Jac" } },
-            {"1Pirre", new string [] { "1Pi", "1P" } },
-            {"2Pierre", new string [] { "2Pi", "2P" } },
-            {"1Jean", new string [] { "1Jn", "1J"} },
-            {"2Jean", new string [] { "2Jn", "2J"} },
-            {"3Jean", new string [] { "3Jn", "3J"} },
+            {"1 Pierre", new string [] { "1Pierre", "1Pi", "1P" } },
+            {"2 Pierre", new string [] { "2Pierre", "2Pi", "2P" } },
+            {"1 Jean", new string [] { "1Jean", "1Jn", "1J"} },
+            {"2 Jean", new string [] { "2Jean", "2Jn", "2J"} },
+            {"3 Jean", new string [] { "3Jean", "3Jn", "3J"} },
             {"Jude", new string [] { "Jd", "Jud"} },
             {"Apocalypse", new string [] {"Ap"} }
         };
@@ -99,7 +85,7 @@ namespace PaSToMySword.Tools
 
         #region Methods
 
-        static public int BookNumberFromAbbreviation(string book)
+        public int BookNumberFromAbbreviation(string book)
         {
             book = Regex.Replace(book, @"\s+", ""); // remove all space
             if (BookList.ContainsKey(book))
@@ -113,29 +99,47 @@ namespace PaSToMySword.Tools
             }
         }
 
-        static public Reference ConvertReference(string referenceString)
+        public Reference ConvertReference(string referenceString)
         {
-            Regex regex = new Regex(@"(?<book>[^\s]+) (?<chapter>[\d]+)[:.]?(?<verse>[\d]+)?-?(?<verse2>[\d]+)?");
+            Regex regex = new Regex(@"(?<book>[^\s]+) (?<chapter>[\d]+)[:.]?(?<verse>[\d]+)?[-]?(?<verse2>[\d]+)?(?<suffix>.*)");
             GroupCollection groups = regex.Match(referenceString).Groups;
 
             Reference reference = new Reference();
 
             foreach (string groupName in regex.GetGroupNames())
             {
-                if (!groups[groupName].Success)
+                if (!groups[groupName].Success || string.IsNullOrEmpty(groups[groupName].Value))
                     continue;
 
                 if (groupName == "book")
                     reference.Book = groups[groupName].Value;
 
                 if (groupName == "chapter")
-                    reference.Chapter = int.Parse(groups[groupName].Value);
+                {
+                    if(!groups["verse"].Success) // Reference without chapter in small books
+                    {
+                        reference.Chapter = 1;
+                        reference.BookWithoutChapter = true;
+                        reference.FromVerse = int.Parse(groups[groupName].Value);
+                    }
+                    else
+                    {
+                        reference.Chapter = int.Parse(groups[groupName].Value);
+                    }
+                }
 
                 if (groupName == "verse")
+                {
                     reference.FromVerse = int.Parse(groups[groupName].Value);
+                }
 
                 if (groupName == "verse2")
+                {
                     reference.ToVerse = int.Parse(groups[groupName].Value);
+                }
+
+                if (groupName == "suffix")
+                    reference.Suffix = groups[groupName].Value;
             }
 
             if (reference.ToVerse is null)
@@ -144,18 +148,31 @@ namespace PaSToMySword.Tools
             return reference;
         }
 
-        static public string ToStringReference(Reference reference)
+        public abstract string ReferenceToBookLink(Reference reference);
+        public abstract string ReferenceToCommentaryLink(Reference reference);
+
+        public string ReferenceToReadableString(Reference reference)
         {
             int bookIndex = BookNumberFromAbbreviation(reference.Book);
 
             if (bookIndex >= 0)
             {
-                if (reference.FromVerse == reference.ToVerse)
-                    return $"b{bookIndex}.{reference.Chapter}.{reference.FromVerse}";
+                string bookName = BookList.Keys.ToList()[bookIndex];
+
+                if(reference.BookWithoutChapter)
+                {
+                    return $"{bookName} {reference.FromVerse}";
+                }
                 else
-                    return $"b{bookIndex}.{reference.Chapter}.{reference.FromVerse}-{reference.ToVerse}";
+                {
+                    if (reference.FromVerse == reference.ToVerse)
+                        return $"{bookName} {reference.Chapter}:{reference.FromVerse}";
+                    else
+                        return $"{bookName} {reference.Chapter}:{reference.FromVerse}-{reference.ToVerse}";
+                }
             }
-            else{
+            else
+            {
                 return string.Empty;
             }
         }

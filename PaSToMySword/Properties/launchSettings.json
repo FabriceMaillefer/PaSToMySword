@@ -2,7 +2,7 @@
   "profiles": {
     "PaSToMySword": {
       "commandName": "Project",
-      "commandLineArgs": "-p recueil.json -o pas.cmt.mybible"
+      "commandLineArgs": "-i \"D:\\Personnel\\Developpement\\PlaireAuSeigneur\\PASA 2006-2021v6_compact.txt\" -o PAS"
     }
   }
 }

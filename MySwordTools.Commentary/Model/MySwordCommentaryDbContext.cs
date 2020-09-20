@@ -17,7 +17,7 @@ namespace MySwordTools.Commentaries.Model
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={_dataSource}");
+            => options.UseSqlite($"Data Source={_dataSource}.cmt.mybible");
 
         public DbSet<Commentary> Commentaries { get; set; }
         public DbSet<Details> Details { get; set; }

@@ -1,5 +1,4 @@
 ﻿using Common.Commentaries.Model;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -116,7 +115,7 @@ namespace Common.Commentaries.Tools
 
                 if (groupName == "chapter")
                 {
-                    if(!groups["verse"].Success) // Reference without chapter in small books
+                    if (!groups["verse"].Success) // Reference without chapter in small books
                     {
                         reference.Chapter = 1;
                         reference.BookWithoutChapter = true;
@@ -149,6 +148,7 @@ namespace Common.Commentaries.Tools
         }
 
         public abstract string ReferenceToBookLink(Reference reference);
+
         public abstract string ReferenceToCommentaryLink(Reference reference);
 
         public string ReferenceToReadableString(Reference reference)
@@ -159,7 +159,7 @@ namespace Common.Commentaries.Tools
             {
                 string bookName = BookList.Keys.ToList()[bookIndex];
 
-                if(reference.BookWithoutChapter)
+                if (reference.BookWithoutChapter)
                 {
                     return $"{bookName} {reference.FromVerse}";
                 }

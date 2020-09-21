@@ -6,6 +6,8 @@ namespace MyBibleTools.Commentaries.Model
     {
         private readonly string _dataSource;
 
+        public static string Suffix = ".commentaries.SQLite3";
+
         public MyBibleCommentaryDbContext(string dataSource)
         {
             _dataSource = dataSource;
@@ -17,7 +19,7 @@ namespace MyBibleTools.Commentaries.Model
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={_dataSource}.commentaries.SQLite3");
+            => options.UseSqlite($"Data Source={_dataSource}{Suffix}");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

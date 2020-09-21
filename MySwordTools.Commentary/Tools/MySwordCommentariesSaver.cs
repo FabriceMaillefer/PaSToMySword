@@ -14,7 +14,6 @@ namespace MySwordTools.Commentaries
 {
     public class MySwordCommentariesSaver : ICommentariesSaver
     {
-
         #region Constructors
 
         public MySwordCommentariesSaver(
@@ -86,18 +85,18 @@ namespace MySwordTools.Commentaries
 
         private void SaveToDb(IEnumerable<Commentary> commentaries, Details details, string outputDbName, bool deleteFirst = true)
         {
-            if(deleteFirst)
+            if (deleteFirst)
             {
-                if(File.Exists(outputDbName))
+                if (File.Exists(outputDbName + MySwordCommentaryDbContext.Suffix))
                 {
-                    _logger.LogInformation($"Delete existing database {outputDbName}");
-                    File.Delete(outputDbName);
+                    _logger.LogInformation($"Delete existing database {outputDbName}{MySwordCommentaryDbContext.Suffix}");
+                    File.Delete(outputDbName + MySwordCommentaryDbContext.Suffix);
                 }
             }
 
             using var db = new MySwordCommentaryDbContext(outputDbName);
 
-            _logger.LogDebug($"Migrade database {outputDbName}");
+            _logger.LogDebug($"Migrade database {outputDbName}{MySwordCommentaryDbContext.Suffix}");
 
             db.Database.Migrate();
 
@@ -108,8 +107,6 @@ namespace MySwordTools.Commentaries
             db.AddRange(commentaries);
             db.SaveChanges();
         }
-
-     
 
         #endregion Methods
 

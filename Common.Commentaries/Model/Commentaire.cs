@@ -34,7 +34,6 @@ namespace Common.Commentaries.Model
 
         public bool IsValid => !string.IsNullOrWhiteSpace(Titre) && !string.IsNullOrWhiteSpace(Reference);
         public bool IsPartial => !string.IsNullOrWhiteSpace(Titre) ^ !string.IsNullOrWhiteSpace(Reference);
-
     }
 
     public class Commentaire

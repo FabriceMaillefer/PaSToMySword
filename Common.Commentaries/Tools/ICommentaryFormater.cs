@@ -12,5 +12,4 @@ namespace CommonTools.Commentaries.Tools
         where TReferenceConverter : IReferenceConverter
     {
     }
-
 }

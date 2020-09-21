@@ -117,7 +117,5 @@ namespace PaSToMySword.Tools
         }
 
         #endregion Methods
-
-        
     }
 }

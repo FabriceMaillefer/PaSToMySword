@@ -5,6 +5,7 @@ namespace MySwordTools.Commentaries.Model
     public class MySwordCommentaryDbContext : DbContext
     {
         private readonly string _dataSource;
+        public static string Suffix = ".cmt.mybible";
 
         public MySwordCommentaryDbContext(string dataSource)
         {
@@ -17,10 +18,9 @@ namespace MySwordTools.Commentaries.Model
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={_dataSource}.cmt.mybible");
+            => options.UseSqlite($"Data Source={_dataSource}{Suffix}");
 
         public DbSet<Commentary> Commentaries { get; set; }
         public DbSet<Details> Details { get; set; }
-
     }
 }

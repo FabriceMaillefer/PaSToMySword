@@ -7,17 +7,11 @@ using Microsoft.Extensions.Logging;
 using MyBibleTools.Commentaries;
 using MyBibleTools.Commentaries.Tools;
 using MySwordTools.Commentaries;
-using MySwordTools.Commentaries.Model;
 using MySwordTools.Commentaries.Tools;
 using NLog.Extensions.Logging;
 using PaSToMySword.Tools;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Console = Colorful.Console;
 
 namespace PaSToMySword

@@ -87,16 +87,16 @@ namespace MyBibleTools.Commentaries
         {
             if (deleteFirst)
             {
-                if (File.Exists(outputDbName))
+                if (File.Exists(outputDbName + MyBibleCommentaryDbContext.Suffix))
                 {
-                    _logger.LogInformation($"Delete existing database {outputDbName}");
-                    File.Delete(outputDbName);
+                    _logger.LogInformation($"Delete existing database {outputDbName + MyBibleCommentaryDbContext.Suffix}");
+                    File.Delete(outputDbName + MyBibleCommentaryDbContext.Suffix);
                 }
             }
 
             using var db = new MyBibleCommentaryDbContext(outputDbName);
 
-            _logger.LogDebug($"Migrade database {outputDbName}");
+            _logger.LogDebug($"Migrade database {outputDbName + MyBibleCommentaryDbContext.Suffix}");
 
             db.Database.Migrate();
 

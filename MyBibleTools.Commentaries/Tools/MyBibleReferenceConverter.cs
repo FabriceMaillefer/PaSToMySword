@@ -6,6 +6,13 @@ namespace MyBibleTools.Commentaries.Tools
 {
     public class MyBibleReferenceConverter : BaseReferenceConverter
     {
+        #region Methods
+
+        public static int ConvertBookIndex(int bookIndex)
+        {
+            return BookIndexConvertion[bookIndex];
+        }
+
         public override string ReferenceToBookLink(Reference reference)
         {
             return $"B:{ToStringReference(reference)}";
@@ -16,27 +23,9 @@ namespace MyBibleTools.Commentaries.Tools
             return $"C:@{ToStringReference(reference)}";
         }
 
-        private string ToStringReference(Reference reference)
-        {
-            int bookIndex = BookNumberFromAbbreviation(reference.Book);
+        #endregion Methods
 
-            if (bookIndex >= 0)
-            {
-                if (reference.FromVerse == reference.ToVerse)
-                    return $"{BookIndexConvertion[bookIndex]}.{reference.Chapter}.{reference.FromVerse}";
-                else
-                    return $"{BookIndexConvertion[bookIndex]}.{reference.Chapter}.{reference.FromVerse}-{reference.ToVerse}";
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
-        public static int ConvertBookIndex(int bookIndex)
-        {
-            return BookIndexConvertion[bookIndex];
-        }
+        #region Fields
 
         // MyBible use non-standard book number, see https://mybible.zone/code-eng.php
         private static readonly Dictionary<int, int> BookIndexConvertion = new Dictionary<int, int>()
@@ -108,5 +97,24 @@ namespace MyBibleTools.Commentaries.Tools
             {65, 720 },
             {66, 730 },
         };
+
+        #endregion Fields
+
+        private string ToStringReference(Reference reference)
+        {
+            int bookIndex = BookNumberFromAbbreviation(reference.Book);
+
+            if (bookIndex >= 0)
+            {
+                if (reference.FromVerse == reference.ToVerse)
+                    return $"{BookIndexConvertion[bookIndex]}.{reference.Chapter}.{reference.FromVerse}";
+                else
+                    return $"{BookIndexConvertion[bookIndex]}.{reference.Chapter}.{reference.FromVerse}-{reference.ToVerse}";
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
     }
 }

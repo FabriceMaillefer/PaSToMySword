@@ -7,6 +7,8 @@ namespace MySwordTools.Commentaries.Model
     [Table("details")]
     public class Details
     {
+        #region Properties
+
         [Key]
         [Column("title")]
         public string Title { get; set; }
@@ -31,5 +33,7 @@ namespace MySwordTools.Commentaries.Model
 
         [Column("publishdate")]
         public string PublishDate { get; set; }
+
+        #endregion Properties
     }
 }

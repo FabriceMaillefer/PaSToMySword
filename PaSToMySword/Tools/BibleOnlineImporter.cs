@@ -10,8 +10,7 @@ namespace PaSToMySword.Tools
 {
     public class BibleOnlineImporter
     {
-        private readonly ILogger<BibleOnlineImporter> _logger;
-        private readonly Regex _regex;
+        #region Constructors
 
         public BibleOnlineImporter(ILogger<BibleOnlineImporter> logger)
         {
@@ -19,6 +18,10 @@ namespace PaSToMySword.Tools
             _regex = new Regex(@"\$\$\$(?<referencePrincipale>.*?)$|\\\\\\\$(?<titre>.*?)\\\$\\\\|\\\&\\\&\\\%.*, (?<recueilDate>.*?)\\\%|\\@(?<citation>.*?)\\@|\\\\#(?<reference>.*?)\\\\|\\\\.*?\""(?<linkedReference>.*?)\"".*?\@\@.*?\""(?<linkedTitre>.*?)\""\\\\|(?<texte>[^[\\@*\\@]+|[\\\\#*\\\\]+]|[\$\$\$.*?])"
                 , RegexOptions.Compiled);
         }
+
+        #endregion Constructors
+
+        #region Methods
 
         public RecueilExchange ReadFile(string path)
         {
@@ -68,6 +71,15 @@ namespace PaSToMySword.Tools
 
             return recueils;
         }
+
+        #endregion Methods
+
+        #region Fields
+
+        private readonly ILogger<BibleOnlineImporter> _logger;
+        private readonly Regex _regex;
+
+        #endregion Fields
 
         private Commentaire ImportCommentaire(string texte)
         {

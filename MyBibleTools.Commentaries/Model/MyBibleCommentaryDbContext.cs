@@ -4,9 +4,13 @@ namespace MyBibleTools.Commentaries.Model
 {
     public class MyBibleCommentaryDbContext : DbContext
     {
-        private readonly string _dataSource;
+        #region Fields
 
         public static string Suffix = ".commentaries.SQLite3";
+
+        #endregion Fields
+
+        #region Constructors
 
         public MyBibleCommentaryDbContext(string dataSource)
         {
@@ -18,6 +22,17 @@ namespace MyBibleTools.Commentaries.Model
             _dataSource = "test.db";
         }
 
+        #endregion Constructors
+
+        #region Properties
+
+        public DbSet<Commentary> Commentaries { get; set; }
+        public DbSet<Info> Infos { get; set; }
+
+        #endregion Properties
+
+        #region Methods
+
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite($"Data Source={_dataSource}{Suffix}");
 
@@ -27,7 +42,8 @@ namespace MyBibleTools.Commentaries.Model
             .HasIndex(p => new { p.Book, p.FromChapter, p.ToChapter });
         }
 
-        public DbSet<Commentary> Commentaries { get; set; }
-        public DbSet<Info> Infos { get; set; }
+        #endregion Methods
+
+        private readonly string _dataSource;
     }
 }

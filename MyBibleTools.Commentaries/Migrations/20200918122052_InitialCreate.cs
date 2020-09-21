@@ -4,6 +4,8 @@ namespace MyBibleTools.Commentaries.Migrations
 {
     public partial class InitialCreate : Migration
     {
+        #region Methods
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -50,5 +52,7 @@ namespace MyBibleTools.Commentaries.Migrations
             migrationBuilder.DropTable(
                 name: "info");
         }
+
+        #endregion Methods
     }
 }

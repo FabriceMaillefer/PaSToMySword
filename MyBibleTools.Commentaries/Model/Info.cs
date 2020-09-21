@@ -6,6 +6,8 @@ namespace MyBibleTools.Commentaries.Model
     [Table("info")]
     public class Info
     {
+        #region Constructors
+
         public Info()
         {
         }
@@ -16,11 +18,17 @@ namespace MyBibleTools.Commentaries.Model
             Value = value;
         }
 
+        #endregion Constructors
+
+        #region Properties
+
         [Key]
         [Column("name")]
         public string Name { get; set; }
 
         [Column("value ")]
         public string Value { get; set; }
+
+        #endregion Properties
     }
 }

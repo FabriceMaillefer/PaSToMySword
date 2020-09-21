@@ -5,6 +5,8 @@ namespace MySwordTools.Commentaries.Migrations
 {
     public partial class InitialCreate : Migration
     {
+        #region Methods
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -51,5 +53,7 @@ namespace MySwordTools.Commentaries.Migrations
             migrationBuilder.DropTable(
                 name: "details");
         }
+
+        #endregion Methods
     }
 }

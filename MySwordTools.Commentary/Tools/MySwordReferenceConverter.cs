@@ -5,6 +5,8 @@ namespace MySwordTools.Commentaries.Tools
 {
     public class MySwordReferenceConverter : BaseReferenceConverter
     {
+        #region Methods
+
         public override string ReferenceToBookLink(Reference reference)
         {
             return $"b{ToStringReference(reference)}";
@@ -31,5 +33,7 @@ namespace MySwordTools.Commentaries.Tools
                 return string.Empty;
             }
         }
+
+        #endregion Methods
     }
 }

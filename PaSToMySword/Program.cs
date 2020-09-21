@@ -18,19 +18,29 @@ namespace PaSToMySword
 {
     internal class CommandLineOptions
     {
+        #region Properties
+
         [Option('i', "input", Required = true, HelpText = "Input file raw text to be processed.")]
         public string InputFile { get; set; }
 
         [Option('o', "output", Required = true, HelpText = "Output file name to be generated.")]
         public string Output { get; set; }
+
+        #endregion Properties
     }
 
     internal class Program
     {
+        #region Fields
+
         private static MySwordCommentariesSaver _mySwordCommentariesExport;
         private static MyBibleCommentariesSaver _myBibleCommentariesExport;
         private static ICommentaryFormater _commentaireHtmlFormater;
         private static BibleOnlineImporter _bibleOnlineImporter;
+
+        #endregion Fields
+
+        #region Methods
 
         private static void Main(string[] args)
         {
@@ -80,5 +90,7 @@ namespace PaSToMySword
                 file.WriteLine(_commentaireHtmlFormater.ToString(commentaire));
             }
         }
+
+        #endregion Methods
     }
 }

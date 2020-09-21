@@ -6,6 +6,8 @@ namespace MyBibleTools.Commentaries.Model
     [Table("commentaries")]
     public class Commentary
     {
+        #region Properties
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         [Column("id")]
@@ -28,5 +30,7 @@ namespace MyBibleTools.Commentaries.Model
 
         [Column("text")]
         public string Content { get; set; }
+
+        #endregion Properties
     }
 }

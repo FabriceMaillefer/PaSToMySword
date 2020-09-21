@@ -4,6 +4,8 @@ namespace MyBibleTools.Commentaries.Model
 {
     public class Details
     {
+        #region Properties
+
         public string Origin { get; set; }
         public string HistoryOfChanges { get; set; }
         public string Language { get; set; }
@@ -12,6 +14,10 @@ namespace MyBibleTools.Commentaries.Model
         public string Region { get; set; }
         public string HyperlinkLanguages { get; set; }
         public string HtmlStyle { get; set; }
+
+        #endregion Properties
+
+        #region Methods
 
         public IEnumerable<Info> ToInfos()
         {
@@ -24,5 +30,7 @@ namespace MyBibleTools.Commentaries.Model
             yield return new Info("hyperlink_languages", HyperlinkLanguages);
             yield return new Info("html_style", HtmlStyle);
         }
+
+        #endregion Methods
     }
 }

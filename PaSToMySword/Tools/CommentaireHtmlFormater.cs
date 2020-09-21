@@ -8,12 +8,14 @@ namespace PaSToMySword.Tools
     public class CommentaireHtmlFormater<TReferenceConverter> : ICommentaryFormater<TReferenceConverter>
         where TReferenceConverter : IReferenceConverter
     {
-        private readonly TReferenceConverter _referenceConverter;
+        #region Constructors
 
         public CommentaireHtmlFormater(TReferenceConverter referenceConverter)
         {
             _referenceConverter = referenceConverter;
         }
+
+        #endregion Constructors
 
         #region Methods
 
@@ -117,5 +119,11 @@ namespace PaSToMySword.Tools
         }
 
         #endregion Methods
+
+        #region Fields
+
+        private readonly TReferenceConverter _referenceConverter;
+
+        #endregion Fields
     }
 }

@@ -46,6 +46,18 @@ namespace MyBibleTools.Commentaries
                 }, filename);
         }
 
+        #endregion Methods
+
+        #region Fields
+
+        private readonly IReferenceConverter _referenceConverter;
+
+        private readonly ILogger<MyBibleCommentariesSaver> _logger;
+
+        private readonly ICommentaryFormater _commentaryFormater;
+
+        #endregion Fields
+
         private IEnumerable<Commentary> CommentairesToMyBibleCommentaries(IEnumerable<Commentaire> commentaires)
         {
             List<Commentary> commentaries = new List<Commentary>();
@@ -108,16 +120,5 @@ namespace MyBibleTools.Commentaries
             db.AddRange(commentaries);
             db.SaveChanges();
         }
-
-        private readonly IReferenceConverter _referenceConverter;
-
-        #endregion Methods
-
-        #region Fields
-
-        private readonly ILogger<MyBibleCommentariesSaver> _logger;
-        private readonly ICommentaryFormater _commentaryFormater;
-
-        #endregion Fields
     }
 }

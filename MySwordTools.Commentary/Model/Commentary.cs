@@ -6,6 +6,8 @@ namespace MySwordTools.Commentaries.Model
     [Table("commentary")]
     public class Commentary
     {
+        #region Properties
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         [Column("id")]
@@ -25,5 +27,7 @@ namespace MySwordTools.Commentaries.Model
 
         [Column("data")]
         public string Content { get; set; }
+
+        #endregion Properties
     }
 }

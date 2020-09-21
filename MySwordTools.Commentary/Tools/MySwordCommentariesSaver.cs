@@ -47,6 +47,18 @@ namespace MySwordTools.Commentaries
                 filename);
         }
 
+        #endregion Methods
+
+        #region Fields
+
+        private readonly ILogger<MySwordCommentariesSaver> _logger;
+
+        private readonly ICommentaryFormater _commentaryFormater;
+
+        private readonly MySwordReferenceConverter _referenceConverter;
+
+        #endregion Fields
+
         private IEnumerable<Commentary> CommentairesToMySwordCommentaries(IEnumerable<Commentaire> commentaires)
         {
             List<Commentary> commentaries = new List<Commentary>();
@@ -107,15 +119,5 @@ namespace MySwordTools.Commentaries
             db.AddRange(commentaries);
             db.SaveChanges();
         }
-
-        #endregion Methods
-
-        #region Fields
-
-        private readonly ILogger<MySwordCommentariesSaver> _logger;
-        private readonly ICommentaryFormater _commentaryFormater;
-        private readonly MySwordReferenceConverter _referenceConverter;
-
-        #endregion Fields
     }
 }

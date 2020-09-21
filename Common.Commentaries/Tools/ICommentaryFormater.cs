@@ -5,7 +5,11 @@ namespace CommonTools.Commentaries.Tools
 {
     public interface ICommentaryFormater
     {
+        #region Methods
+
         string ToString(Commentaire commentaire);
+
+        #endregion Methods
     }
 
     public interface ICommentaryFormater<TReferenceConverter> : ICommentaryFormater

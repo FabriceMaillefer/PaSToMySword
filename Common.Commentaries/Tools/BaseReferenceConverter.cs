@@ -83,7 +83,10 @@ namespace Common.Commentaries.Tools
 
                 if (book.Item2 == true) // Small book with only one chapter
                 {
-                    return $"{bookName} {reference.FromVerse}";
+                    if (reference.ReferenceWithoutVerse)
+                        return $"{bookName} {reference.Chapter}";
+                    else
+                        return $"{bookName} {reference.FromVerse}";
                 }
                 else if(reference.ReferenceWithoutVerse)
                 {

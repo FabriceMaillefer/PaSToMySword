@@ -14,7 +14,7 @@
 
         public int? ToVerse { get; set; }
 
-        public bool BookWithoutChapter { get; set; } = false;
+        public bool ReferenceWithoutVerse { get; set; } = false;
 
         #endregion Properties
     }

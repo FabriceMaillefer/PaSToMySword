@@ -18,13 +18,14 @@ namespace Common.Commentaries.Tools
             }
             else
             {
-                string bookKey = BookList.Where(t => t.Value.Contains(book)).Select(t => t.Key).SingleOrDefault();
+                string bookKey = BookList.Where(t => t.Value.Item1.Contains(book)).Select(t => t.Key).SingleOrDefault();
                 return BookList.Keys.ToList().IndexOf(bookKey);
             }
         }
 
         public Reference ConvertReference(string referenceString)
         {
+            // (?<book>[^\s]+)? (?:(?<chapter>[\d]+):)(?:(?<verseFrom>[\d]+)[-](?<verseTo>[\d]+)|(?<verse0>[\d]+)(?:[,](?<verse1>[\d]+))+)
             Regex regex = new Regex(@"(?<book>[^\s]+) (?<chapter>[\d]+)[:.]?(?<verse>[\d]+)?[-]?(?<verse2>[\d]+)?(?<suffix>.*)");
             GroupCollection groups = regex.Match(referenceString).Groups;
 
@@ -40,15 +41,10 @@ namespace Common.Commentaries.Tools
 
                 if (groupName == "chapter")
                 {
-                    if (!groups["verse"].Success) // Reference without chapter in small books
+                    reference.Chapter = int.Parse(groups[groupName].Value);
+                    if (!groups["verse"].Success) // Reference without verse
                     {
-                        reference.Chapter = 1;
-                        reference.BookWithoutChapter = true;
-                        reference.FromVerse = int.Parse(groups[groupName].Value);
-                    }
-                    else
-                    {
-                        reference.Chapter = int.Parse(groups[groupName].Value);
+                        reference.ReferenceWithoutVerse = true;
                     }
                 }
 
@@ -82,11 +78,19 @@ namespace Common.Commentaries.Tools
 
             if (bookIndex >= 0)
             {
-                string bookName = BookList.Keys.ToList()[bookIndex];
+                string bookName = BookList.Keys.ElementAt(bookIndex);
+                var book = BookList.Values.ElementAt(bookIndex);
 
-                if (reference.BookWithoutChapter)
+                if (book.Item2 == true) // Small book with only one chapter
                 {
-                    return $"{bookName} {reference.FromVerse}";
+                    if (reference.ReferenceWithoutVerse)
+                        return $"{bookName} {reference.Chapter}";
+                    else
+                        return $"{bookName} {reference.FromVerse}";
+                }
+                else if(reference.ReferenceWithoutVerse)
+                {
+                    return $"{bookName} {reference.Chapter}";
                 }
                 else
                 {
@@ -106,75 +110,76 @@ namespace Common.Commentaries.Tools
 
         #region Fields
 
-        static protected Dictionary<string, IEnumerable<string>> BookList = new Dictionary<string, IEnumerable<string>>
+        // Key = full book name, (item1 = list of abbreviations, item2 = true if book has only one chapter) 
+        static protected Dictionary<string, (IEnumerable<string>, bool)> BookList = new Dictionary<string, (IEnumerable<string>, bool)>
         {
-            {"###", new string []{ } },
-            {"Genèse", new string [] {"Ge", "Gen", "Genese" } },
-            {"Exode", new string [] { "Ex", "Exo"} },
-            {"Lévitique", new string [] { "Levitique", "Le", "Lé", "Lv", "Lev", "Lév" } },
-            {"Nombres", new string [] { "Nombre", "No", "Nb", "Nom"} },
-            {"Deutéronome", new string [] { "De", "Deut", "Dt" } },
-            {"Josué", new string [] { "Josue", "Jos", "Js" } },
-            {"Juges", new string [] { "Juge", "Jug", "Jg" } },
-            {"Ruth", new string [] { "Ru", "Rt" } },
-            {"1 Samuel", new string [] { "1Samuel", "1Sa","1S" } },
-            {"2 Samuel", new string [] { "2Samuel", "2Sa","2S"} },
-            {"1 Rois", new string [] { "1Rois", "1R", "1Ro" } },
-            {"2 Rois", new string [] { "2Rois", "2R", "2Ro" } },
-            {"1 Chroniques", new string [] { "1 Chroniques", "1Ch" } },
-            {"2 Chroniques", new string [] { "2 Chroniques", "2Ch" } },
-            {"Esdras", new string [] { "Esd" } },
-            {"Néhémie", new string [] { "Nehemie", "Ne", "Né", "Néh", "Neh"} },
-            {"Esther", new string [] { "Est"} },
-            {"Job", new string [] { "Jb" } },
-            {"Psaumes", new string [] { "Psaume", "Psa", "Ps" } },
-            {"Proverbes", new string [] { "Pro","Pr"} },
-            {"Ecclésiaste", new string [] {"Ec", "Ecc" } },
-            {"Cantique", new string [] { "Ct", "Ca", "Cant" } },
-            {"Ésaïe", new string [] { "Esaie", "Es", "És", "Esa", "Ésa" } },
-            {"Jérémie", new string [] { "Jér", "Jer", "Jeremie" } },
-            {"Lamentations", new string [] { "La", "Lam" } },
-            {"Ézéchiel", new string [] { "Ez", "Éz" } },
-            {"Daniel", new string [] { "Da", "Dn" } },
-            {"Osée", new string [] { "Osee", "Os" } },
-            {"Joël", new string [] { "Joel", "Jl", "Joe" } },
-            {"Amos", new string [] { "Am" } },
-            {"Abdias", new string [] { "Ab", "Abd"} },
-            {"Jonas", new string [] { "Jon"} },
-            {"Michée", new string [] { "Mi","Michee","Mic"} },
-            {"Nahum", new string [] { "Na", "Nah"} },
-            {"Habakuk", new string [] { "Ha", "Hab" } },
-            {"Sophonie", new string [] { "So", "Sop" } },
-            {"Aggée", new string [] { "Ag", "Aggee", "Agg"} },
-            {"Zacharie", new string [] { "Za", "Zac"} },
-            {"Malachie", new string [] { "Ma", "Mal"} },
-            {"Matthieu", new string [] { "Mt", "Mat"} },
-            {"Marc", new string [] { "Mr","Mc"} },
-            {"Luc", new string [] { "Lu","Lc" } },
-            {"Jean", new string [] { "Jn" } },
-            {"Actes", new string [] { "Ac", "Act" } },
-            {"Romains", new string [] {"Romain", "Ro", "Rom" } },
-            {"1 Corinthiens", new string [] { "1Corinthiens", "1Co" } },
-            {"2 Corinthiens", new string [] { "2Corinthiens", "2Co" } },
-            {"Galates", new string [] { "Gal", "Ga" } },
-            {"Éphésiens", new string [] { "Ephesiens", "Ep", "Eph" } },
-            {"Philippiens", new string [] { "Phi", "Ph", "Php" } },
-            {"Colossiens", new string [] { "Col", "Co" } },
-            {"1 Thessaloniciens", new string [] {"1Thessaloniciens", "1Th","1Thess" } },
-            {"2 Thessaloniciens", new string [] { "2Thessaloniciens", "2Th","2Thess" } },
-            {"1 Timothée", new string [] { "1Timothée", "1Timothee", "1Tim", "1Ti" } },
-            {"2 Timothée", new string [] { "2Timothée", "2Timothee", "2Tim", "2Ti" } },
-            {"Tite", new string [] { "Ti", "Tt", "Tit" } },
-            {"Philémon", new string [] { "Phm", "Philemon" } },
-            {"Hébreux", new string [] { "Hé", "Hebreux", "He", "Heb", "Héb" } },
-            {"Jacques", new string [] { "Jc", "Jaccque", "Ja", "Jac" } },
-            {"1 Pierre", new string [] { "1Pierre", "1Pi", "1P" } },
-            {"2 Pierre", new string [] { "2Pierre", "2Pi", "2P" } },
-            {"1 Jean", new string [] { "1Jean", "1Jn", "1J"} },
-            {"2 Jean", new string [] { "2Jean", "2Jn", "2J"} },
-            {"3 Jean", new string [] { "3Jean", "3Jn", "3J"} },
-            {"Jude", new string [] { "Jd", "Jud"} },
-            {"Apocalypse", new string [] {"Ap"} }
+            {"###"          , (new string []{ }, false) },
+            {"Genèse"       , (new string [] {"Ge", "Gen", "Genese" }, false) },
+            {"Exode"        , (new string [] { "Ex", "Exo"}, false) },
+            {"Lévitique"    , (new string [] { "Levitique", "Le", "Lé", "Lv", "Lev", "Lév" }, false) },
+            {"Nombres"      , (new string [] { "Nombre", "No", "Nb", "Nom"}, false) },
+            {"Deutéronome"  , (new string [] { "De", "Deut", "Dt" }, false) },
+            {"Josué"        , (new string [] { "Josue", "Jos", "Js" }, false) },
+            {"Juges"        , (new string [] { "Juge", "Jug", "Jg" }, false) },
+            {"Ruth"         , (new string [] { "Ru", "Rt" }, false) },
+            {"1 Samuel"     , (new string [] { "1Samuel", "1Sa","1S" }, false) },
+            {"2 Samuel"     , (new string [] { "2Samuel", "2Sa","2S"}, false) },
+            {"1 Rois"       , (new string [] { "1Rois", "1R", "1Ro" }, false) },
+            {"2 Rois"       , (new string [] { "2Rois", "2R", "2Ro" }, false) },
+            {"1 Chroniques" , (new string [] { "1 Chroniques", "1Ch" }, false) },
+            {"2 Chroniques" , (new string [] { "2 Chroniques", "2Ch" }, false) },
+            {"Esdras"       , (new string [] { "Esd" }, false) },
+            {"Néhémie"      , (new string [] { "Nehemie", "Ne", "Né", "Néh", "Neh"}, false) },
+            {"Esther"       , (new string [] { "Est"}, false) },
+            {"Job"          , (new string [] { "Jb" }, false) },
+            {"Psaumes"      , (new string [] { "Psaume", "Psa", "Ps" }, false) },
+            {"Proverbes"    , (new string [] { "Pro","Pr"}, false) },
+            {"Ecclésiaste"  , (new string [] {"Ec", "Ecc" }, false) },
+            {"Cantique"     , (new string [] { "Ct", "Ca", "Cant" }, false) },
+            {"Ésaïe"        , (new string [] { "Esaie", "Es", "És", "Esa", "Ésa" }, false) },
+            {"Jérémie"      , (new string [] { "Jér", "Jer", "Jeremie" }, false) },
+            {"Lamentations" , (new string [] { "La", "Lam" }, false) },
+            {"Ézéchiel"     , (new string [] { "Ez", "Éz" }, false) },
+            {"Daniel"       , (new string [] { "Da", "Dn" }, false) },
+            {"Osée"         , (new string [] { "Osee", "Os" }, false) },
+            {"Joël"         , (new string [] { "Joel", "Jl", "Joe" }, false) },
+            {"Amos"         , (new string [] { "Am" }, false) },
+            {"Abdias"       , (new string [] { "Ab", "Abd"}, true) },
+            {"Jonas"        , (new string [] { "Jon"}, false) },
+            {"Michée"       , (new string [] { "Mi","Michee","Mic"}, false) },
+            {"Nahum"        , (new string [] { "Na", "Nah"}, false) },
+            {"Habakuk"      , (new string [] { "Ha", "Hab" }, false) },
+            {"Sophonie"     , (new string [] { "So", "Sop" }, false) },
+            {"Aggée"        , (new string [] { "Ag", "Aggee", "Agg"}, false) },
+            {"Zacharie"     , (new string [] { "Za", "Zac"}, false) },
+            {"Malachie"     , (new string [] { "Ma", "Mal"}, false) },
+            {"Matthieu"     , (new string [] { "Mt", "Mat"}, false) },
+            {"Marc"         , (new string [] { "Mr","Mc"}, false) },
+            {"Luc"          , (new string [] { "Lu","Lc" }, false) },
+            {"Jean"         , (new string [] { "Jn" }, false) },
+            {"Actes"        , (new string [] { "Ac", "Act" }, false) },
+            {"Romains"      , (new string [] {"Romain", "Ro", "Rom" }, false) },
+            {"1 Corinthiens", (new string [] { "1Corinthiens", "1Co" }, false) },
+            {"2 Corinthiens", (new string [] { "2Corinthiens", "2Co" }, false) },
+            {"Galates"      , (new string [] { "Gal", "Ga" }, false) },
+            {"Éphésiens"    , (new string [] { "Ephesiens", "Ep", "Eph" }, false) },
+            {"Philippiens"  , (new string [] { "Phi", "Ph", "Php" }, false) },
+            {"Colossiens"   , (new string [] { "Col", "Co" }, false) },
+            {"1 Thessaloniciens", (new string [] {"1Thessaloniciens", "1Th","1Thess" }, false) },
+            {"2 Thessaloniciens", (new string [] { "2Thessaloniciens", "2Th","2Thess" }, false) },
+            {"1 Timothée"   , (new string [] { "1Timothée", "1Timothee", "1Tim", "1Ti" }, false) },
+            {"2 Timothée"   , (new string [] { "2Timothée", "2Timothee", "2Tim", "2Ti" }, false) },
+            {"Tite"         , (new string [] { "Ti", "Tt", "Tit" }, false) },
+            {"Philémon"     , (new string [] { "Phm", "Philemon" }, true) },
+            {"Hébreux"      , (new string [] { "Hé", "Hebreux", "He", "Heb", "Héb" }, false) },
+            {"Jacques"      , (new string [] { "Jc", "Jaccque", "Ja", "Jac" }, false) },
+            {"1 Pierre"     , (new string [] { "1Pierre", "1Pi", "1P" }, false) },
+            {"2 Pierre"     , (new string [] { "2Pierre", "2Pi", "2P" }, false) },
+            {"1 Jean"       , (new string [] { "1Jean", "1Jn", "1J"}, false) },
+            {"2 Jean"       , (new string [] { "2Jean", "2Jn", "2J"}, false) },
+            {"3 Jean"       , (new string [] { "3Jean", "3Jn", "3J"}, false) },
+            {"Jude"         , (new string [] { "Jd", "Jud"}, true) },
+            {"Apocalypse"   , (new string [] {"Ap"}, false) }
         };
 
         #endregion Fields

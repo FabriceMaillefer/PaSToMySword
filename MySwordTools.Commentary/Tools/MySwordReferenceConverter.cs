@@ -23,10 +23,12 @@ namespace MySwordTools.Commentaries.Tools
 
             if (bookIndex >= 0)
             {
-                if (reference.FromVerse == reference.ToVerse)
-                    return $"{bookIndex}.{reference.Chapter}.{reference.FromVerse}";
+                string stringBuilder = $"{bookIndex}.{reference.Chapter}.{reference.FromVerse.GetValueOrDefault()}";
+
+                if (reference.ToVerse.HasValue)
+                    return $"{stringBuilder}-{reference.ToVerse}";
                 else
-                    return $"{bookIndex}.{reference.Chapter}.{reference.FromVerse}-{reference.ToVerse}";
+                    return stringBuilder;
             }
             else
             {

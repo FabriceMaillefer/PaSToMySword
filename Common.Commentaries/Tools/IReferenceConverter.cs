@@ -1,4 +1,5 @@
 ﻿using Common.Commentaries.Model;
+using System.Collections.Generic;
 
 namespace Common.Commentaries.Tools
 {
@@ -8,7 +9,7 @@ namespace Common.Commentaries.Tools
 
         int BookNumberFromAbbreviation(string book);
 
-        Reference ConvertReference(string referenceString);
+        List<Reference> ConvertReference(string referenceString);
 
         string ReferenceToReadableString(Reference reference);
 

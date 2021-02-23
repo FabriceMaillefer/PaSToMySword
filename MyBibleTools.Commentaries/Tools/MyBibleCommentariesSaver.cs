@@ -73,24 +73,24 @@ namespace MyBibleTools.Commentaries
 
         private Commentary CommentaireToMyBibleCommentary(Commentaire commentaire)
         {
-            Reference reference = _referenceConverter.ConvertReference(commentaire.Reference);
-            int bookIndex = _referenceConverter.BookNumberFromAbbreviation(reference.Book);
+            List<Reference> references = _referenceConverter.ConvertReference(commentaire.Reference);
+            int bookIndex = _referenceConverter.BookNumberFromAbbreviation(references.First().Book);
 
             if (bookIndex >= 0)
             {
                 return new Commentary
                 {
                     Book = MyBibleReferenceConverter.ConvertBookIndex(bookIndex),
-                    FromChapter = reference.Chapter,
-                    ToChapter = reference.Chapter,
-                    FromVerse = reference.FromVerse,
-                    ToVerse = reference.ToVerse.Value,
+                    FromChapter = references.First().Chapter.GetValueOrDefault(),
+                    ToChapter = references.First().Chapter.GetValueOrDefault(),
+                    FromVerse = references.First().FromVerse.GetValueOrDefault(),
+                    ToVerse = references.First().ToVerse.GetValueOrDefault(references.First().FromVerse.GetValueOrDefault()),
                     Content = _commentaryFormater.ToString(commentaire)
                 };
             }
             else
             {
-                _logger.LogError($"book {reference.Book} not found in BookList");
+                _logger.LogError($"book {references.First().Book} not found in BookList");
             }
             return null;
         }

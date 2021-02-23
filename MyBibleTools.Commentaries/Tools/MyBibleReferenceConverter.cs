@@ -107,7 +107,7 @@ namespace MyBibleTools.Commentaries.Tools
 
             if (bookIndex >= 0)
             {
-                string stringBuilder = $"{BookIndexConvertion[bookIndex]}.{reference.Chapter}.{reference.FromVerse.GetValueOrDefault()}";
+                string stringBuilder = $"{BookIndexConvertion[bookIndex]} {reference.Chapter}:{reference.FromVerse.GetValueOrDefault(1)}"; // MyBible ne supporte pas le lien vers un chapitre
 
                 if (reference.ToVerse.HasValue)
                     return $"{stringBuilder}-{reference.ToVerse}";

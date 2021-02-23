@@ -23,49 +23,121 @@ namespace Common.Commentaries.Tools
             }
         }
 
-        public Reference ConvertReference(string referenceString)
+        public List<Reference> ConvertReference(string referenceString)
         {
             // (?<book>[^\s]+)? (?:(?<chapter>[\d]+):)(?:(?<verseFrom>[\d]+)[-](?<verseTo>[\d]+)|(?<verse0>[\d]+)(?:[,](?<verse1>[\d]+))+)
-            Regex regex = new Regex(@"(?<book>[^\s]+) (?<chapter>[\d]+)[:.]?(?<verse>[\d]+)?[-]?(?<verse2>[\d]+)?(?<suffix>.*)");
-            GroupCollection groups = regex.Match(referenceString).Groups;
 
+            Regex regex = new Regex(@"(?:(?<book>\d?[\w]+)[ ]+)?(?:(?:(?<chapter>\d+)[: ]+)?(?:(?:(?<verseFrom>\d+)-(?<verseTo>\d+))|(?<verse>\d+)))");
+
+            List<Reference> references = new List<Reference>();
             Reference reference = new Reference();
 
-            foreach (string groupName in regex.GetGroupNames())
+            MatchCollection matches = regex.Matches(referenceString);
+
+            foreach (object item in matches)
             {
-                if (!groups[groupName].Success || string.IsNullOrEmpty(groups[groupName].Value))
-                    continue;
-
-                if (groupName == "book")
-                    reference.Book = groups[groupName].Value;
-
-                if (groupName == "chapter")
+                if (item is Match match)
                 {
-                    reference.Chapter = int.Parse(groups[groupName].Value);
-                    if (!groups["verse"].Success) // Reference without verse
+                    if (match.Success)
                     {
-                        reference.ReferenceWithoutVerse = true;
+                        GroupCollection groups = match.Groups;
+
+                        foreach (string groupName in regex.GetGroupNames())
+                        {
+                            if (!groups[groupName].Success || string.IsNullOrEmpty(groups[groupName].Value))
+                                continue;
+
+                            if (groupName == "book")
+                            {
+                                reference = new Reference();
+                                references.Add(reference);
+
+                                reference.DisplayBook = true;
+                                reference.Book = groups[groupName].Value;
+                            }
+
+                            if (groupName == "chapter")
+                            {
+                                if(reference.Chapter.HasValue)
+                                {
+                                    reference = new Reference
+                                    {
+                                        Book = reference.Book,
+                                    };
+                                    references.Add(reference);
+                                }
+
+                                reference.DisplayChapter = true;
+                                reference.Chapter = int.Parse(groups[groupName].Value);
+                            }
+
+                            if (groupName == "verse" || groupName == "verseFrom")
+                            {
+                                int verseValue = int.Parse(groups[groupName].Value);
+                                if (reference.FromVerse.HasValue)
+                                {
+
+                                    if(verseValue == reference.FromVerse + 1 || verseValue == reference.ToVerse + 1)
+                                    {
+                                        reference.ToVerse = verseValue;
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        reference = new Reference
+                                        {
+                                            Book = reference.Book,
+                                            Chapter = reference.Chapter,
+                                        };
+                                        references.Add(reference);
+                                    }
+                                }
+
+                                if(reference.DisplayBook && !groups["chapter"].Success) // reference with Book and Chapter only are Book + Verse
+                                {
+                                    int bookIndex = BookNumberFromAbbreviation(reference.Book);
+                                    if(bookIndex >= 0)
+                                    {
+                                        (IEnumerable<string>, bool) book = BookList.Values.ElementAt(bookIndex);
+
+                                        if (book.Item2) // Small book with only one chapter
+                                        {
+                                            reference.Chapter = 1;
+                                            reference.FromVerse = int.Parse(groups[groupName].Value);
+                                        }
+                                        else
+                                        {
+                                            reference.DisplayChapter = true;
+                                            reference.Chapter = int.Parse(groups[groupName].Value);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    int bookIndex = BookNumberFromAbbreviation(reference.Book);
+                                    if (bookIndex >= 0)
+                                    {
+                                        (IEnumerable<string>, bool) book = BookList.Values.ElementAt(bookIndex);
+
+                                        if (book.Item2) // Small book with only one chapter
+                                        {
+                                            reference.DisplayChapter = false;
+                                        }
+                                    }
+                                    reference.FromVerse = int.Parse(groups[groupName].Value);
+                                }
+                            }
+
+                            if (groupName == "verseTo")
+                            {
+                                reference.ToVerse = int.Parse(groups[groupName].Value);
+                            }
+                        }
                     }
                 }
-
-                if (groupName == "verse")
-                {
-                    reference.FromVerse = int.Parse(groups[groupName].Value);
-                }
-
-                if (groupName == "verse2")
-                {
-                    reference.ToVerse = int.Parse(groups[groupName].Value);
-                }
-
-                if (groupName == "suffix")
-                    reference.Suffix = groups[groupName].Value;
             }
 
-            if (reference.ToVerse is null)
-                reference.ToVerse = reference.FromVerse;
-
-            return reference;
+            return references;
         }
 
         public abstract string ReferenceToBookLink(Reference reference);
@@ -79,26 +151,41 @@ namespace Common.Commentaries.Tools
             if (bookIndex >= 0)
             {
                 string bookName = BookList.Keys.ElementAt(bookIndex);
-                var book = BookList.Values.ElementAt(bookIndex);
 
-                if (book.Item2 == true) // Small book with only one chapter
+                string referenceString = string.Empty;
+                if(reference.DisplayBook)
                 {
-                    if (reference.ReferenceWithoutVerse)
-                        return $"{bookName} {reference.Chapter}";
+                    referenceString = $"{bookName} ";
+                }
+
+                if(reference.DisplayChapter)
+                {
+                    referenceString = $"{referenceString}{reference.Chapter}";
+
+                    if (reference.FromVerse.HasValue)
+                    {
+                        referenceString = $"{referenceString}:";
+                    }
+                }
+
+                if (reference.FromVerse.HasValue)
+                {
+                    referenceString = $"{referenceString}{reference.FromVerse}";
+                }
+
+                if (reference.ToVerse.HasValue)
+                {
+                    if(reference.ToVerse == reference.FromVerse + 1)
+                    {
+                        referenceString = $"{referenceString},{reference.ToVerse}";
+                    }
                     else
-                        return $"{bookName} {reference.FromVerse}";
+                    {
+                        referenceString = $"{referenceString}-{reference.ToVerse}";
+                    }
                 }
-                else if(reference.ReferenceWithoutVerse)
-                {
-                    return $"{bookName} {reference.Chapter}";
-                }
-                else
-                {
-                    if (reference.FromVerse == reference.ToVerse)
-                        return $"{bookName} {reference.Chapter}:{reference.FromVerse}";
-                    else
-                        return $"{bookName} {reference.Chapter}:{reference.FromVerse}-{reference.ToVerse}";
-                }
+
+                return referenceString;
             }
             else
             {
@@ -110,7 +197,7 @@ namespace Common.Commentaries.Tools
 
         #region Fields
 
-        // Key = full book name, (item1 = list of abbreviations, item2 = true if book has only one chapter) 
+        // Key = full book name, (item1 = list of abbreviations, item2 = true if book has only one chapter)
         static protected Dictionary<string, (IEnumerable<string>, bool)> BookList = new Dictionary<string, (IEnumerable<string>, bool)>
         {
             {"###"          , (new string []{ }, false) },

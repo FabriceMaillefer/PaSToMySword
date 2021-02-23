@@ -89,6 +89,8 @@ namespace PaSToMySword
             {
                 file.WriteLine(_commentaireHtmlFormater.ToString(commentaire));
             }
+
+            Console.WriteLine(FiggleFonts.Swan.Render("Success !"), Color.Green);
         }
 
         #endregion Methods

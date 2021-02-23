@@ -1,6 +1,8 @@
 ﻿using Common.Commentaries.Model;
 using Common.Commentaries.Tools;
 using CommonTools.Commentaries.Tools;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PaSToMySword.Tools
@@ -41,8 +43,22 @@ namespace PaSToMySword.Tools
                             {
                                 try
                                 {
-                                    Reference reference = _referenceConverter.ConvertReference(paragrapheItem.Texte);
-                                    sb.Append($"<a href=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</a>{reference.Suffix}");
+                                    List<Reference> references = _referenceConverter.ConvertReference(paragrapheItem.Texte);
+                                    foreach (Reference reference in references)
+                                    {
+                                        if (reference != references.First())
+                                        {
+                                            if (reference.DisplayBook)
+                                            {
+                                                sb.Append("; ");
+                                            }
+                                            else
+                                            {
+                                                sb.Append(", ");
+                                            }
+                                        }
+                                        sb.Append($"<a href=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</a>{reference.Suffix}");
+                                    }
                                 }
                                 catch
                                 {
@@ -78,8 +94,22 @@ namespace PaSToMySword.Tools
                             {
                                 try
                                 {
-                                    Reference reference = _referenceConverter.ConvertReference(paragrapheItem.Texte);
-                                    sb.Append($"<a href=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</a>{reference.Suffix}");
+                                    List<Reference> references = _referenceConverter.ConvertReference(paragrapheItem.Texte);
+                                    foreach (Reference reference in references)
+                                    {
+                                        if(reference != references.First())
+                                        {
+                                            if(reference.DisplayBook)
+                                            {
+                                                sb.Append("; ");
+                                            }
+                                            else
+                                            {
+                                                sb.Append(", ");
+                                            }
+                                        }
+                                        sb.Append($"<a href=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</a>{reference.Suffix}");
+                                    }
                                 }
                                 catch
                                 {
@@ -103,8 +133,11 @@ namespace PaSToMySword.Tools
                 sb.Append("<p>");
                 try
                 {
-                    Reference reference = _referenceConverter.ConvertReference(commentaireLink.Reference);
-                    sb.Append($"Voir note sur <a href=\"{_referenceConverter.ReferenceToCommentaryLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}{reference.Suffix} - {commentaireLink.Titre}</a>");
+                    List<Reference> references = _referenceConverter.ConvertReference(commentaireLink.Reference);
+                    foreach (Reference reference in references)
+                    {
+                        sb.Append($"Voir note sur <a href=\"{_referenceConverter.ReferenceToCommentaryLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}{reference.Suffix} - {commentaireLink.Titre}</a>");
+                    }
                 }
                 catch
                 {

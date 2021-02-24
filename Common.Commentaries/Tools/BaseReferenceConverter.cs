@@ -58,7 +58,7 @@ namespace Common.Commentaries.Tools
 
                             if (groupName == "chapter")
                             {
-                                if(reference.Chapter.HasValue)
+                                if (reference.Chapter.HasValue)
                                 {
                                     reference = new Reference
                                     {
@@ -76,8 +76,7 @@ namespace Common.Commentaries.Tools
                                 int verseValue = int.Parse(groups[groupName].Value);
                                 if (reference.FromVerse.HasValue)
                                 {
-
-                                    if(verseValue == reference.FromVerse + 1 || verseValue == reference.ToVerse + 1)
+                                    if (verseValue == reference.FromVerse + 1 || verseValue == reference.ToVerse + 1)
                                     {
                                         reference.ToVerse = verseValue;
                                         continue;
@@ -93,10 +92,10 @@ namespace Common.Commentaries.Tools
                                     }
                                 }
 
-                                if(reference.DisplayBook && !groups["chapter"].Success) // reference with Book and Chapter only are Book + Verse
+                                if (reference.DisplayBook && !groups["chapter"].Success) // reference with Book and Chapter only are Book + Verse
                                 {
                                     int bookIndex = BookNumberFromAbbreviation(reference.Book);
-                                    if(bookIndex >= 0)
+                                    if (bookIndex >= 0)
                                     {
                                         (IEnumerable<string>, bool) book = BookList.Values.ElementAt(bookIndex);
 
@@ -153,12 +152,12 @@ namespace Common.Commentaries.Tools
                 string bookName = BookList.Keys.ElementAt(bookIndex);
 
                 string referenceString = string.Empty;
-                if(reference.DisplayBook)
+                if (reference.DisplayBook)
                 {
                     referenceString = $"{bookName} ";
                 }
 
-                if(reference.DisplayChapter)
+                if (reference.DisplayChapter)
                 {
                     referenceString = $"{referenceString}{reference.Chapter}";
 
@@ -175,7 +174,7 @@ namespace Common.Commentaries.Tools
 
                 if (reference.ToVerse.HasValue)
                 {
-                    if(reference.ToVerse == reference.FromVerse + 1)
+                    if (reference.ToVerse == reference.FromVerse + 1)
                     {
                         referenceString = $"{referenceString},{reference.ToVerse}";
                     }

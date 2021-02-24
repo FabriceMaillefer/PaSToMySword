@@ -1,7 +1,6 @@
 ﻿using Common.Commentaries.Model;
 using Common.Commentaries.Tools;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MyBibleTools.Commentaries.Tools
 {

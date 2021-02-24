@@ -97,9 +97,9 @@ namespace PaSToMySword.Tools
                                     List<Reference> references = _referenceConverter.ConvertReference(paragrapheItem.Texte);
                                     foreach (Reference reference in references)
                                     {
-                                        if(reference != references.First())
+                                        if (reference != references.First())
                                         {
-                                            if(reference.DisplayBook)
+                                            if (reference.DisplayBook)
                                             {
                                                 sb.Append("; ");
                                             }

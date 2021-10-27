@@ -29,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MyBibleTools.Commentaries\MyBibleTools.Commentaries.csproj" />
     <ProjectReference Include="..\MySwordTools.Commentary\MySwordTools.Commentaries.csproj" />
+    <ProjectReference Include="..\OSISTools.Commentaries\OSISTools.Commentaries.csproj" />
   </ItemGroup>
 
 </Project>

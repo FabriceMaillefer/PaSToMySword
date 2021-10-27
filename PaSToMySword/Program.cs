@@ -9,6 +9,7 @@ using MyBibleTools.Commentaries.Tools;
 using MySwordTools.Commentaries;
 using MySwordTools.Commentaries.Tools;
 using NLog.Extensions.Logging;
+using OSISTools.Commentaries.Tools;
 using PaSToMySword.Tools;
 using System.Drawing;
 using System.IO;
@@ -35,6 +36,8 @@ namespace PaSToMySword
 
         private static MySwordCommentariesSaver _mySwordCommentariesExport;
         private static MyBibleCommentariesSaver _myBibleCommentariesExport;
+        public static OSISCommentariesSaver _osisCommentariesExport;
+
         private static ICommentaryFormater _commentaireHtmlFormater;
         private static BibleOnlineImporter _bibleOnlineImporter;
 
@@ -49,13 +52,17 @@ namespace PaSToMySword
             using var serviceProvider = new ServiceCollection()
                 .AddSingleton<MySwordCommentariesSaver>()
                 .AddSingleton<MyBibleCommentariesSaver>()
+                .AddSingleton<OSISCommentariesSaver>()
+
                 .AddSingleton<BibleOnlineImporter>()
 
                 .AddSingleton<MyBibleReferenceConverter>()
                 .AddSingleton<MySwordReferenceConverter>()
+                .AddSingleton<OSISReferenceConverter>()
 
                 .AddSingleton<ICommentaryFormater<MyBibleReferenceConverter>, CommentaireHtmlFormater<MyBibleReferenceConverter>>()
                 .AddSingleton<ICommentaryFormater<MySwordReferenceConverter>, CommentaireHtmlFormater<MySwordReferenceConverter>>()
+                .AddSingleton<OSISFormater>()
 
                 .AddLogging(config =>
                 {
@@ -67,6 +74,8 @@ namespace PaSToMySword
 
             _mySwordCommentariesExport = serviceProvider.GetService<MySwordCommentariesSaver>();
             _myBibleCommentariesExport = serviceProvider.GetService<MyBibleCommentariesSaver>();
+            _osisCommentariesExport = serviceProvider.GetService<OSISCommentariesSaver>();
+
             _commentaireHtmlFormater = serviceProvider.GetService<ICommentaryFormater<MySwordReferenceConverter>>();
 
             _bibleOnlineImporter = serviceProvider.GetService<BibleOnlineImporter>();
@@ -80,8 +89,8 @@ namespace PaSToMySword
             RecueilExchange recueils = _bibleOnlineImporter.ReadFile(opts.InputFile);
 
             _mySwordCommentariesExport.Save(recueils.Commentaires, opts.Output);
-
             _myBibleCommentariesExport.Save(recueils.Commentaires, opts.Output);
+            _osisCommentariesExport.Save(recueils.Commentaires, opts.Output);
 
             using StreamWriter file = new StreamWriter(@"output.html");
 

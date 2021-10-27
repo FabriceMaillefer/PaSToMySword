@@ -25,8 +25,6 @@ namespace Common.Commentaries.Tools
 
         public List<Reference> ConvertReference(string referenceString)
         {
-            // (?<book>[^\s]+)? (?:(?<chapter>[\d]+):)(?:(?<verseFrom>[\d]+)[-](?<verseTo>[\d]+)|(?<verse0>[\d]+)(?:[,](?<verse1>[\d]+))+)
-
             Regex regex = new Regex(@"(?:(?<book>\d?[\w]+)[ ]+)?(?:(?:(?<chapter>\d+)[: ]+)?(?:(?:(?<verseFrom>\d+)-(?<verseTo>\d+))|(?<verse>\d+)))");
 
             List<Reference> references = new List<Reference>();

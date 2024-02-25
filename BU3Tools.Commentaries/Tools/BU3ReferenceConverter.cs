@@ -23,7 +23,7 @@ namespace BU3Tools.Commentaries.Tools
 
             if (bookIndex >= 0)
             {
-                string stringBuilder = $"{BookIndexConvertion[bookIndex]}.{reference.Chapter}.{reference.FromVerse.GetValueOrDefault()}";
+                string stringBuilder = $"{BookIndexConvertion[bookIndex]}{reference.Chapter}.{reference.FromVerse.GetValueOrDefault()}";
 
                 if (reference.ToVerse.HasValue)
                     return $"{stringBuilder}-{reference.ToVerse}";

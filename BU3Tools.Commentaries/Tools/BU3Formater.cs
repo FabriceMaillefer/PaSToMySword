@@ -1,16 +1,15 @@
 ﻿using Common.Commentaries.Model;
 using CommonTools.Commentaries.Tools;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace OSISTools.Commentaries.Tools
+namespace BU3Tools.Commentaries.Tools
 {
-    public class OSISFormater : ICommentaryFormater<OSISReferenceConverter>
+    public class BU3Formater : ICommentaryFormater<BU3ReferenceConverter>
     {
         #region Constructors
 
-        public OSISFormater(OSISReferenceConverter referenceConverter)
+        public BU3Formater(BU3ReferenceConverter referenceConverter)
         {
             _referenceConverter = referenceConverter;
         }
@@ -21,19 +20,20 @@ namespace OSISTools.Commentaries.Tools
 
         public string ToString(Commentaire commentaire)
         {
-            StringBuilder sb = new();
+            StringBuilder sb = new StringBuilder();
 
-            sb.Append($"<title>{commentaire.Titre}</title>");
+            sb.Append($"<h1>{commentaire.Titre}</h1>");
+            sb.Append("<hr />");
 
             foreach (Paragraphe paragraphe in commentaire.Versets)
             {
-                sb.Append("<p>");
+                sb.Append("<div><blockquote>");
                 foreach (ParagrapheItem paragrapheItem in paragraphe.Content)
                 {
                     switch (paragrapheItem.Type)
                     {
                         case ParagrapheItemType.Citation:
-                            sb.Append($"<q marker=\"\"><hi type=\"italic\">{paragrapheItem.Texte}</hi></q>");
+                            sb.Append($"<i>{paragrapheItem.Texte}</i>");
                             break;
 
                         case ParagrapheItemType.Reference:
@@ -43,7 +43,7 @@ namespace OSISTools.Commentaries.Tools
                                     List<Reference> references = _referenceConverter.ConvertReference(paragrapheItem.Texte);
                                     foreach (Reference reference in references)
                                     {
-                                        if (reference != references.First())
+                                        if (reference != references[0])
                                         {
                                             if (reference.DisplayBook)
                                             {
@@ -54,7 +54,7 @@ namespace OSISTools.Commentaries.Tools
                                                 sb.Append(", ");
                                             }
                                         }
-                                        sb.Append($"<reference osisRef=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</reference>{reference.Suffix}");
+                                        sb.Append($"<a href=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</a>{reference.Suffix}");
                                     }
                                 }
                                 catch
@@ -71,8 +71,10 @@ namespace OSISTools.Commentaries.Tools
                     }
                 }
 
-                sb.Append("</p>");
+                sb.Append("</blockquote></div>");
             }
+
+            sb.Append($"<hr />");
 
             foreach (Paragraphe paragraphe in commentaire.Paragraphes)
             {
@@ -82,7 +84,7 @@ namespace OSISTools.Commentaries.Tools
                     switch (paragrapheItem.Type)
                     {
                         case ParagrapheItemType.Citation:
-                            sb.Append($"<q marker=\"\"><hi type=\"italic\">{paragrapheItem.Texte}</hi></q>");
+                            sb.Append($"<i>{paragrapheItem.Texte}</i>");
                             break;
 
                         case ParagrapheItemType.Reference:
@@ -92,7 +94,7 @@ namespace OSISTools.Commentaries.Tools
                                     List<Reference> references = _referenceConverter.ConvertReference(paragrapheItem.Texte);
                                     foreach (Reference reference in references)
                                     {
-                                        if (reference != references.First())
+                                        if (reference != references[0])
                                         {
                                             if (reference.DisplayBook)
                                             {
@@ -103,7 +105,7 @@ namespace OSISTools.Commentaries.Tools
                                                 sb.Append(", ");
                                             }
                                         }
-                                        sb.Append($"<reference osisRef=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</reference>{reference.Suffix}");
+                                        sb.Append($"<a href=\"{_referenceConverter.ReferenceToBookLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}</a>{reference.Suffix}");
                                     }
                                 }
                                 catch
@@ -131,7 +133,7 @@ namespace OSISTools.Commentaries.Tools
                     List<Reference> references = _referenceConverter.ConvertReference(commentaireLink.Reference);
                     foreach (Reference reference in references)
                     {
-                        sb.Append($"Voir note sur <reference osisRef=\"{_referenceConverter.ReferenceToCommentaryLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}{reference.Suffix} - {commentaireLink.Titre}</reference>");
+                        sb.Append($"Voir note sur <a href=\"{_referenceConverter.ReferenceToCommentaryLink(reference)}\">{_referenceConverter.ReferenceToReadableString(reference)}{reference.Suffix} - {commentaireLink.Titre}</a>");
                     }
                 }
                 catch
@@ -140,9 +142,9 @@ namespace OSISTools.Commentaries.Tools
                 }
                 sb.Append("</p>");
             }
-            sb.Append("<p>");
-            sb.Append($"Publié dans Plaire au Seigneur {commentaire.Date.Year} le {commentaire.Date:d}");
-            sb.Append("</p>");
+
+            sb.Append("<hr />");
+
             return sb.ToString();
         }
 
@@ -150,7 +152,7 @@ namespace OSISTools.Commentaries.Tools
 
         #region Fields
 
-        private readonly OSISReferenceConverter _referenceConverter;
+        private readonly BU3ReferenceConverter _referenceConverter;
 
         #endregion Fields
     }

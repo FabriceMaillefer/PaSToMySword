@@ -63,6 +63,7 @@ namespace PaSToMySword.Tools
                     else
                     {
                         _logger.LogError($"commentaire incomplet dans {commentaire.Titre}");
+                        _logger.LogError($"Texte courant : {texte}");
                     }
                 }
             }

@@ -223,7 +223,7 @@ namespace Common.Commentaries.Tools
             {"Ésaïe"        , (new string [] { "Esaie", "Es", "És", "Esa", "Ésa" }, false) },
             {"Jérémie"      , (new string [] { "Jér", "Jer", "Jeremie" }, false) },
             {"Lamentations" , (new string [] { "La", "Lam" }, false) },
-            {"Ézéchiel"     , (new string [] { "Ez", "Éz" }, false) },
+            {"Ézéchiel"     , (new string [] { "Ez", "Éz", "Eze", "Ézé" }, false) },
             {"Daniel"       , (new string [] { "Da", "Dn" }, false) },
             {"Osée"         , (new string [] { "Osee", "Os" }, false) },
             {"Joël"         , (new string [] { "Joel", "Jl", "Joe" }, false) },
@@ -256,14 +256,14 @@ namespace Common.Commentaries.Tools
             {"Tite"         , (new string [] { "Ti", "Tt", "Tit" }, false) },
             {"Philémon"     , (new string [] { "Phm", "Philemon" }, true) },
             {"Hébreux"      , (new string [] { "Hé", "Hebreux", "He", "Heb", "Héb" }, false) },
-            {"Jacques"      , (new string [] { "Jc", "Jaccque", "Ja", "Jac" }, false) },
+            {"Jacques"      , (new string [] { "Jc", "Jaccque", "Ja", "Jac", "Jas" }, false) },
             {"1 Pierre"     , (new string [] { "1Pierre", "1Pi", "1P" }, false) },
             {"2 Pierre"     , (new string [] { "2Pierre", "2Pi", "2P" }, false) },
             {"1 Jean"       , (new string [] { "1Jean", "1Jn", "1J"}, false) },
             {"2 Jean"       , (new string [] { "2Jean", "2Jn", "2J"}, false) },
             {"3 Jean"       , (new string [] { "3Jean", "3Jn", "3J"}, false) },
             {"Jude"         , (new string [] { "Jd", "Jud"}, true) },
-            {"Apocalypse"   , (new string [] {"Ap"}, false) }
+            {"Apocalypse"   , (new string [] {"Ap", "Apo"}, false) }
         };
 
         #endregion Fields

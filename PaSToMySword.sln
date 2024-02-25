@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30503.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaSToMySword", "PaSToMySword\PaSToMySword.csproj", "{05D10F42-C0C6-45C1-86C9-18645DFB42EE}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBibleTools.Commentaries",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonTools.Commentaries", "Common.Commentaries\CommonTools.Commentaries.csproj", "{F96928FD-785A-4EDA-B2DE-C172C5C52EA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSISTools.Commentaries", "OSISTools.Commentaries\OSISTools.Commentaries.csproj", "{DB4FE362-3176-4DE5-A02B-8ADA241AC2ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSISTools.Commentaries", "OSISTools.Commentaries\OSISTools.Commentaries.csproj", "{DB4FE362-3176-4DE5-A02B-8ADA241AC2ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BU3Tools.Commentaries", "BU3Tools.Commentaries\BU3Tools.Commentaries.csproj", "{6C5573BF-9322-47C6-8D5C-7D45E500DAEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{DB4FE362-3176-4DE5-A02B-8ADA241AC2ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB4FE362-3176-4DE5-A02B-8ADA241AC2ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB4FE362-3176-4DE5-A02B-8ADA241AC2ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C5573BF-9322-47C6-8D5C-7D45E500DAEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C5573BF-9322-47C6-8D5C-7D45E500DAEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C5573BF-9322-47C6-8D5C-7D45E500DAEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C5573BF-9322-47C6-8D5C-7D45E500DAEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

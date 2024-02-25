@@ -75,7 +75,7 @@ namespace OSISTools.Commentaries.Tools
                 writer.WriteStartElement("div");
                 writer.WriteAttributeString("type", "section");
                 writer.WriteAttributeString("annotateType", "commentary");
-                writer.WriteAttributeString("annotateRef", _referenceConverter.ReferenceToBookLink(referencesList.First()));
+                writer.WriteAttributeString("annotateRef", _referenceConverter.ReferenceToBookLink(referencesList[0]));
 
                 writer.WriteRaw(_formater.ToString(commentaire));
 

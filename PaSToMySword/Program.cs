@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using BU3Tools.Commentaries.Tools;
+using CommandLine;
 using Common.Commentaries.Model;
 using CommonTools.Commentaries.Tools;
 using Figgle;
@@ -36,8 +37,8 @@ namespace PaSToMySword
 
         private static MySwordCommentariesSaver _mySwordCommentariesExport;
         private static MyBibleCommentariesSaver _myBibleCommentariesExport;
-        public static OSISCommentariesSaver _osisCommentariesExport;
-
+        private static OSISCommentariesSaver _osisCommentariesExport;
+        private static BU3CommentariesSaver _BU3CommentariesSaver;
         private static ICommentaryFormater _commentaireHtmlFormater;
         private static BibleOnlineImporter _bibleOnlineImporter;
 
@@ -53,16 +54,20 @@ namespace PaSToMySword
                 .AddSingleton<MySwordCommentariesSaver>()
                 .AddSingleton<MyBibleCommentariesSaver>()
                 .AddSingleton<OSISCommentariesSaver>()
+                .AddSingleton<BU3CommentariesSaver>()
 
                 .AddSingleton<BibleOnlineImporter>()
 
                 .AddSingleton<MyBibleReferenceConverter>()
                 .AddSingleton<MySwordReferenceConverter>()
                 .AddSingleton<OSISReferenceConverter>()
+                .AddSingleton<BU3ReferenceConverter>()
+
 
                 .AddSingleton<ICommentaryFormater<MyBibleReferenceConverter>, CommentaireHtmlFormater<MyBibleReferenceConverter>>()
                 .AddSingleton<ICommentaryFormater<MySwordReferenceConverter>, CommentaireHtmlFormater<MySwordReferenceConverter>>()
                 .AddSingleton<OSISFormater>()
+                .AddSingleton<BU3Formater>()
 
                 .AddLogging(config =>
                 {
@@ -75,6 +80,7 @@ namespace PaSToMySword
             _mySwordCommentariesExport = serviceProvider.GetService<MySwordCommentariesSaver>();
             _myBibleCommentariesExport = serviceProvider.GetService<MyBibleCommentariesSaver>();
             _osisCommentariesExport = serviceProvider.GetService<OSISCommentariesSaver>();
+            _BU3CommentariesSaver = serviceProvider.GetService<BU3CommentariesSaver>();
 
             _commentaireHtmlFormater = serviceProvider.GetService<ICommentaryFormater<MySwordReferenceConverter>>();
 
@@ -88,9 +94,10 @@ namespace PaSToMySword
         {
             RecueilExchange recueils = _bibleOnlineImporter.ReadFile(opts.InputFile);
 
-            _mySwordCommentariesExport.Save(recueils.Commentaires, opts.Output);
-            _myBibleCommentariesExport.Save(recueils.Commentaires, opts.Output);
-            _osisCommentariesExport.Save(recueils.Commentaires, opts.Output);
+            //_mySwordCommentariesExport.Save(recueils.Commentaires, opts.Output);
+            //_myBibleCommentariesExport.Save(recueils.Commentaires, opts.Output);
+            //_osisCommentariesExport.Save(recueils.Commentaires, opts.Output);
+            _BU3CommentariesSaver.Save(recueils.Commentaires, opts.Output);
 
             using StreamWriter file = new StreamWriter(@"output.html");
 

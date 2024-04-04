@@ -75,7 +75,7 @@ namespace BU3Tools.Commentaries.Tools
             {15, "EZR" },
             {16, "NEH" }, // Nehemiah
             {17, "EST" }, // Esther
-            {18, "JIB" },
+            {18, "JOB" },
             {19, "PSA" },
             {20, "PRO" },
             {21, "ECC" },
@@ -84,8 +84,8 @@ namespace BU3Tools.Commentaries.Tools
             {24, "JER" },
             {25, "LAM" }, //Lamentations
             {26, "EZK" }, //Ezekiel
-            {27, "SAN" },
-            {28, "JOS" },
+            {27, "DAN" },
+            {28, "HOS" },
             {29, "JOL" },
             {30, "AMO" },
             {31, "OBA" },
